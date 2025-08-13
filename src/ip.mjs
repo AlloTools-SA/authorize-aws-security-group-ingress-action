@@ -6,7 +6,9 @@ const ipProviders = [
 ];
 
 /**
- * Determines the ip address calling the ip provider url
+ * Determines the ip address using IP providers.
+ * It tries each provider in the list until one succeeds.
+ * If all providers fail, it throws an error.
  * @return {Promise<string>}
  */
 export async function determineIp()
