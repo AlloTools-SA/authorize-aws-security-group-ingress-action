@@ -1,6 +1,9 @@
 import fetch from 'node-fetch';
 
-const ipProvider = 'https://ipinfo.io/ip';
+const ipProviders = [
+    'https://ipinfo.io/ip',
+    'https://api.ipify.org'
+];
 
 /**
  * Determines the ip address calling the ip provider url
@@ -8,12 +11,17 @@ const ipProvider = 'https://ipinfo.io/ip';
  */
 export async function determineIp()
 {
-    const resp = await fetch(ipProvider);
-    if (!resp.ok) {
-        throw new Error('Unexpected status code');
+    for (const provider of ipProviders) {
+        try {
+            const resp = await fetch(provider);
+            if (resp.ok) {
+                const ip = await resp.text();
+                return ip.trim();
+            }
+        } catch (error) {
+            console.warn(`Failed to get IP from ${provider}:`, error.message);
+        }
     }
-
-    const ip = await resp.text();
-
-    return ip.trim();
+    
+    throw new Error('All IP providers failed.');
 }
